@@ -51,7 +51,7 @@ function createQuestionsView(questions) {
 }
 
 async function start() {
-    const response = await fetch('http://localhost:3000/api/questions');
+    const response = await fetch('/api/questions');
     const questions = await response.json();
     
     createQuestionsView(questions);
