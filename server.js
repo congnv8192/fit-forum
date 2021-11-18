@@ -14,8 +14,8 @@ app.use(express.json());
 
 let db = null;
 async function startServer() {
-    // connect db
-    const client = await mongodb.MongoClient.connect('mongodb://localhost:27017/fit-forum');
+    // connect db mongodb+srv://admin:admin@cluster0.mynff.mongodb.net/fit-forum
+    const client = await mongodb.MongoClient.connect(process.env.MONGODB_URL || 'mongodb://localhost:27017/fit-forum'); 
     db = client.db();
     console.log('connected to db.');
 
