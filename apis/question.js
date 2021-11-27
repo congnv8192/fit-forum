@@ -1,4 +1,5 @@
 const express = require('express');
+const { currentUser } = require('../middlewares/current-user');
 
 const router = express.Router();
 
@@ -10,7 +11,7 @@ router.get('/api/questions', async function(req, res) {
 });
 
 // add new question
-router.post('/api/questions', async function (req, res) {
+router.post('/api/questions', currentUser, async function (req, res) {
     const {text, content} = req.body;
 
     // validate data
@@ -21,14 +22,11 @@ router.post('/api/questions', async function (req, res) {
     // insert into db
     const question = {
         text, content, 
-        user: {
-            name: 'dennis',
-            avatar: null
-        },
+        user: req.currentUser,
         createdAt: new Date(),
         answers: []
     };
-    const result = await db.collection('questions').insertOne(question);
+    const result = await req.db.collection('questions').insertOne(question);
 
     console.log(result);
 

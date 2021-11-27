@@ -1,7 +1,14 @@
 const express = require('express');
 const mongodb = require('mongodb');
+const cors = require('cors');
+const cookieSession = require('cookie-session');
 
 const app = express();
+
+app.use(cors({
+    origin: true,
+    credentials: true
+}));
 
 // serve static files
 app.use(express.static('public'));
@@ -12,6 +19,10 @@ app.use(express.urlencoded({ extended: true }));
 // json
 app.use(express.json());
 
+app.use(cookieSession({
+    signed: false
+})); // req.session
+
 let db = null;
 async function startServer() {
     // connect db mongodb+srv://admin:admin@cluster0.mynff.mongodb.net/fit-forum
@@ -20,8 +31,8 @@ async function startServer() {
     console.log('connected to db.');
 
     // start listening
-    app.listen(process.env.PORT || 3000, function() {
-        console.log('listening on port 3000...');
+    app.listen(process.env.PORT || 3001, function() {
+        console.log('listening on port 3001...');
     });
 }
 startServer();
@@ -37,3 +48,12 @@ app.use(setDb);
 // question APIs
 const questionAPIs = require('./apis/question');
 app.use(questionAPIs);
+
+const authAPIs = require('./apis/auth');
+app.use(authAPIs);
+
+// user api
+const userAPIs = require('./apis/user');
+const { currentUser } = require('./middlewares/current-user');
+const { requireAuth } = require('./middlewares/require-auth');
+app.use(currentUser,  requireAuth, userAPIs);
